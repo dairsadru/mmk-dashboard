@@ -102,7 +102,7 @@
         <div class="crest">М</div>
         <div>
           <h1>ММК, реальные данные по торговой команде</h1>
-          <p class="sub">На этой версии сайта уже выведены реальные подтверждённые данные из загруженных CSV по 4 торговым. Здесь не просто структура, а фактические суммы, возвраты, месячные срезы и реализации по документам.</p>
+          <p class="sub">Продолжаю развивать сайт дальше. Здесь уже выведены реальные подтверждённые цифры по 4 торговым, плюс дополнительный блок сравнения факта и реализации, чтобы сайт был полезнее не как витрина, а как рабочий экран.</p>
         </div>
       </div>
       <div class="summary-grid" id="summary"></div>
@@ -115,6 +115,7 @@
         <a href="#comparisons">Сравнение месяцев</a>
         <a href="#reals">Реализация</a>
         <a href="#points">Точки</a>
+        <a href="#money">Деньги и факт</a>
         <a href="#limits">Ограничения</a>
       </div>
     </section>
@@ -167,6 +168,27 @@
       <div class="point-list" id="point-insights"></div>
     </section>
 
+    <section class="cards-2 section" id="money">
+      <div class="panel">
+        <h3>Факт против реализации</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Торговый</th>
+              <th>Продажи апрель</th>
+              <th>Реализация</th>
+              <th>Разница</th>
+            </tr>
+          </thead>
+          <tbody id="fact-vs-realization"></tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h3>Приоритеты следующей доработки</h3>
+        <div class="list" id="next-priorities"></div>
+      </div>
+    </section>
+
     <section class="section panel" id="limits">
       <h3>Что ещё не доведено до полной версии</h3>
       <table>
@@ -178,7 +200,7 @@
           <tr><td>Полная карта точек</td><td><span class="badge warn">Частично</span></td><td>Сейчас показаны верхнеуровневые выводы и топы.</td></tr>
         </tbody>
       </table>
-      <div class="footer-note">Важно: этот экран уже опирается на реальные данные, но это ещё не финальная аналитическая система MMK. Следующий шаг, собрать единый data-layer и вытянуть на сайт все точки, все категории и стабильные рекомендации.</div>
+      <div class="footer-note">Это уже рабочий шаг вперёд. Следующий слой, полный data-layer по точкам и товарам, чтобы сайт стал полноценным инструментом супервайзера.</div>
     </section>
   </div>
 
@@ -370,6 +392,32 @@
         <div class="point-tags"><span class="badge warn">MVP data</span></div>
       </div>
     `;
+
+    document.getElementById('fact-vs-realization').innerHTML = data.team.map(t => {
+      const diff = t.realizationTotal - t.currSales;
+      const cls = diff > 50000 ? 'good' : diff < -50000 ? 'bad' : 'warn';
+      return `
+        <tr>
+          <td>${t.name}</td>
+          <td>${fmtMoney(t.currSales)}</td>
+          <td>${fmtMoney(t.realizationTotal)}</td>
+          <td><span class="badge ${cls}">${diff >= 0 ? '+' : ''}${fmtMoney(diff)}</span></td>
+        </tr>
+      `;
+    }).join('');
+
+    document.getElementById('next-priorities').innerHTML = [
+      ['Все точки по каждому торговому', 'Сейчас на сайте только топы и агрегаты. Следующий шаг, вывести полный список точек и вклад каждой точки.'],
+      ['Полный товарный слой', 'Нужны таблицы по SKU, чтобы честно показывать плохие и хорошие товары по точкам.'],
+      ['Брак и визиты', 'После привязки справочников отдельно выводим `##`, нормы 1x/2x и пропущенные визиты.']
+    ].map(([title, text]) => `
+      <div class="item">
+        <div>
+          <div class="point-name">${title}</div>
+          <div class="muted">${text}</div>
+        </div>
+      </div>
+    `).join('');
   </script>
 </body>
 </html>
