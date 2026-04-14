@@ -90,6 +90,7 @@ def collect_realization(path):
     total = 0.0
     docs = 0
     rows = []
+    points = {}
     for row in read_csv(path):
         if len(row) < 14:
             continue
@@ -100,11 +101,31 @@ def collect_realization(path):
             total += value
             docs += 1
             rows.append({"point": point, "value": round(value, 2), "date": date})
+            bucket = points.setdefault(point, {"point": point, "value": 0.0, "docs": 0, "last_date": ""})
+            bucket["value"] += value
+            bucket["docs"] += 1
+            if date and (not bucket["last_date"] or date > bucket["last_date"]):
+                bucket["last_date"] = date
     rows.sort(key=lambda x: x["value"], reverse=True)
+    all_points = sorted(
+        (
+            {
+                "point": item["point"],
+                "value": round(item["value"], 2),
+                "docs": item["docs"],
+                "last_date": item["last_date"],
+            }
+            for item in points.values()
+        ),
+        key=lambda x: x["value"],
+        reverse=True,
+    )
     return {
         "realization_total": round(total, 2),
         "documents": docs,
         "top_points": rows[:7],
+        "all_points": all_points,
+        "points_count": len(all_points),
     }
 
 

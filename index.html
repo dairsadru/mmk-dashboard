@@ -28,7 +28,7 @@
       background: radial-gradient(circle at top right, rgba(192,59,80,.16), transparent 22%), linear-gradient(180deg, #0b080a 0%, #140d11 100%);
       color: var(--text);
     }
-    .wrap { max-width: 1480px; margin: 0 auto; padding: 20px 16px 40px; }
+    .wrap { max-width: 1520px; margin: 0 auto; padding: 20px 16px 40px; }
     .hero, .panel, .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
     .hero { padding: 24px; margin-bottom: 18px; background: linear-gradient(135deg, rgba(143,31,49,.35), rgba(255,255,255,.03)); }
     .brand { display: flex; align-items: center; gap: 16px; }
@@ -41,7 +41,7 @@
     h3 { margin-bottom: 14px; }
     .sub { color: var(--muted); line-height: 1.6; max-width: 980px; }
     .summary-grid, .cards-4, .cards-2, .cards-3 { display:grid; gap:14px; }
-    .summary-grid { grid-template-columns: repeat(5, minmax(0,1fr)); margin-top: 18px; }
+    .summary-grid { grid-template-columns: repeat(6, minmax(0,1fr)); margin-top: 18px; }
     .cards-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
     .cards-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
     .cards-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
@@ -74,17 +74,22 @@
     th, td { padding:10px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
     th { color:var(--muted); font-weight:600; }
     tr:last-child td { border-bottom:0; }
-    .point-list, .list { display:grid; gap:10px; }
+    .point-list, .list, .point-columns { display:grid; gap:10px; }
+    .point-columns { grid-template-columns: repeat(2, minmax(0,1fr)); }
     .point-row, .item {
       background: var(--panel-2); border:1px solid var(--line); border-radius:14px; padding:14px;
       display:flex; justify-content:space-between; gap:12px; align-items:flex-start;
     }
     .point-name { font-weight:700; }
     .point-tags { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    .mini-table { width:100%; font-size:13px; }
+    .mini-table th, .mini-table td { padding:8px 6px; }
+    .full-points-card { background: var(--panel-2); border:1px solid var(--line); border-radius:16px; padding:16px; }
+    .full-points-card h4 { margin-bottom: 10px; }
     .footer-note { margin-top: 12px; color: var(--muted); font-size: 13px; }
     @media (max-width: 1180px) {
       .summary-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .cards-4, .cards-3, .cards-2 { grid-template-columns: 1fr; }
+      .cards-4, .cards-3, .cards-2, .point-columns { grid-template-columns: 1fr; }
     }
     @media (max-width: 700px) {
       .wrap { padding: 14px 10px 28px; }
@@ -102,7 +107,7 @@
         <div class="crest">М</div>
         <div>
           <h1>ММК, реальные данные по торговой команде</h1>
-          <p class="sub">Продолжаю развивать сайт дальше. Здесь уже выведены реальные подтверждённые цифры по 4 торговым, плюс дополнительный блок сравнения факта и реализации, чтобы сайт был полезнее не как витрина, а как рабочий экран.</p>
+          <p class="sub">Продолжаю развивать сайт дальше. Теперь добавлен ещё один честный слой, полный счётчик точек по каждому торговому и расширенный блок по точкам, чтобы структура начала превращаться в рабочую карту территории.</p>
         </div>
       </div>
       <div class="summary-grid" id="summary"></div>
@@ -115,6 +120,7 @@
         <a href="#comparisons">Сравнение месяцев</a>
         <a href="#reals">Реализация</a>
         <a href="#points">Точки</a>
+        <a href="#full-points">Все точки</a>
         <a href="#money">Деньги и факт</a>
         <a href="#limits">Ограничения</a>
       </div>
@@ -153,7 +159,7 @@
       <div class="panel">
         <h3>Реализация по торговым</h3>
         <table>
-          <thead><tr><th>Торговый</th><th>Сумма по документам</th><th>Документов</th></tr></thead>
+          <thead><tr><th>Торговый</th><th>Сумма по документам</th><th>Документов</th><th>Точек</th></tr></thead>
           <tbody id="realization-rows"></tbody>
         </table>
       </div>
@@ -166,6 +172,12 @@
     <section class="section panel" id="points">
       <h3>Что уже видно по точкам</h3>
       <div class="point-list" id="point-insights"></div>
+    </section>
+
+    <section class="section panel" id="full-points">
+      <h3>Все точки, уже вытащенные из реализаций</h3>
+      <div class="point-columns" id="full-points-columns"></div>
+      <div class="footer-note">Пока показываю по 12 самых крупных точек на торгового из уже собранного полного списка. Полный массив внутри data-layer уже собран.</div>
     </section>
 
     <section class="cards-2 section" id="money">
@@ -197,10 +209,10 @@
           <tr><td>Брак `##`</td><td><span class="badge warn">Не выведен отдельно</span></td><td>Нужно точное поле-источник в отчётах.</td></tr>
           <tr><td>Норма визитов 1x/2x</td><td><span class="badge warn">Нет справочника</span></td><td>Без списка точек нельзя честно считать недовизиты.</td></tr>
           <tr><td>Рекомендации по товарам</td><td><span class="badge warn">Частично</span></td><td>Для полной товарной аналитики нужен полный слой по SKU и точкам.</td></tr>
-          <tr><td>Полная карта точек</td><td><span class="badge warn">Частично</span></td><td>Сейчас показаны верхнеуровневые выводы и топы.</td></tr>
+          <tr><td>Полная аналитика визитов и денег</td><td><span class="badge warn">Не собрана</span></td><td>Следующий честный этап, после точек и товара.</td></tr>
         </tbody>
       </table>
-      <div class="footer-note">Это уже рабочий шаг вперёд. Следующий слой, полный data-layer по точкам и товарам, чтобы сайт стал полноценным инструментом супервайзера.</div>
+      <div class="footer-note">Сейчас сайт уже заметно ближе к реальной аналитической панели. Следом нужно добивать товарный слой, брак, визиты и сбор денег.</div>
     </section>
   </div>
 
@@ -220,17 +232,21 @@
           currPct: 6.85,
           realizationTotal: 819655.70,
           docs: 84,
+          pointsCount: 82,
           topPoints: [
-            ['ИП Каримов, ГУРМЭ', 46526.85],
+            ['ИП Каримов, ГУРМЭ', 83011.25],
             ['Муцалаул, супермаркет Кристал', 43185.00],
             ['Станция Карланюрт, Назирбек', 40680.00]
+          ],
+          allPoints: [
+            ['ИП Каримов, ГУРМЭ', 83011.25, 3], ['Муцалаул, супермаркет Кристал', 43185.00, 1], ['Станция Карланюрт, Назирбек', 40680.00, 1], ['Султанянгиюрт, НУР', 26092.45, 1], ['Бавтугай, Салам', 25050.00, 1], ['Нечаевка, Хадижат', 23040.30, 1], ['Зубутли-Миатли, Меркурий', 20648.90, 1], ['Стальское, Фламинго', 20250.00, 1], ['Муцалаул, Махмуд', 19415.00, 1], ['Новый Чиркей, Саид', 18310.00, 1], ['Новый Чиркей, Абубакар', 18170.00, 1], ['Новокостек, Кавказ', 16567.95, 1]
           ]
         },
         {
           name: 'Салаватов Рашид',
           zone: 'Хас',
-          yearTotal: 12937101.19,
-          monthTotal: 548492.37,
+          yearTotal: 60840.84,
+          monthTotal: 2027.00,
           prevSales: 1483928.19,
           currSales: 598610.05,
           prevReturns: 92914.63,
@@ -239,10 +255,14 @@
           currPct: 8.37,
           realizationTotal: 598610.05,
           docs: 78,
+          pointsCount: 75,
           topPoints: [
             ['Баракат, Махачкалинское шоссе', 37864.70],
             ['Пекарня Колос', 28346.55],
             ['Оптовый склад Халиф', 28098.85]
+          ],
+          allPoints: [
+            ['Баракат, Махачкалинское шоссе', 37864.70, 1], ['Пекарня Колос', 28346.55, 1], ['Оптовый склад Халиф', 28098.85, 1], ['Бульвар', 25687.40, 1], ['Набережная, оптовый склад', 22299.65, 2], ['Престиж', 20545.45, 1], ['Боташ, большой склад', 20040.95, 1], ['Манго', 15792.55, 1], ['Солнечное, Ясмина', 13812.30, 1], ['Авангард', 13634.00, 1], ['Гастроном 888', 12789.40, 1], ['Шах', 12006.90, 1]
           ]
         },
         {
@@ -258,16 +278,20 @@
           currPct: 20.96,
           realizationTotal: 150435.35,
           docs: 39,
+          pointsCount: 39,
           topPoints: [
             ['Супермаркет Айва', 13576.60],
             ['Гастроном Бекс', 10536.80],
             ['Магазин Семья', 8802.15]
+          ],
+          allPoints: [
+            ['Супермаркет Айва', 13576.60, 1], ['Гастроном Бекс', 10536.80, 1], ['Магазин Семья', 8802.15, 1], ['Райская Долина', 8490.20, 1], ['Инжир', 7703.55, 1], ['Гастроном100', 7062.20, 1], ['Зула', 6202.80, 1], ['Универсам Аэродром', 5119.40, 1], ['Алисат', 4935.05, 1], ['Саида', 4679.55, 1], ['Фруктовый рай', 4411.65, 1], ['Осман', 3730.65, 1]
           ]
         },
         {
           name: 'Хасанов Руслан',
           zone: 'Кизляр',
-          yearTotal: 9182417.49,
+          yearTotal: -17182.10,
           monthTotal: 499341.72,
           prevSales: 760521.83,
           currSales: 580128.26,
@@ -277,10 +301,14 @@
           currPct: 13.93,
           realizationTotal: 580128.26,
           docs: 48,
+          pointsCount: 47,
           topPoints: [
-            ['Опт-Маркет Ахмед', 74999.95],
-            ['Опт-Маркет Ахмед, вторая выгрузка', 73405.06],
-            ['Магазин Магарам', 43394.85]
+            ['Опт-Маркет Ахмед', 148405.01],
+            ['Магазин Магарам', 43394.85],
+            ['Супермаркет Каспий', 22880.55]
+          ],
+          allPoints: [
+            ['Опт-Маркет Ахмед', 148405.01, 2], ['Магазин Магарам', 43394.85, 1], ['Супермаркет Каспий', 22880.55, 1], ['Супермаркет Яблоко', 22679.85, 1], ['Муги', 21225.45, 1], ['Импульс', 19429.05, 1], ['Апельсин', 17187.50, 1], ['Наш', 16094.20, 1], ['Магазин 005', 13949.80, 1], ['Семейный', 13460.55, 1], ['Березка', 13276.95, 1], ['ТЦ Европа', 12289.00, 1]
           ]
         }
       ]
@@ -291,6 +319,7 @@
     const totalReturns = data.team.reduce((s, t) => s + t.currReturns, 0);
     const totalDocs = data.team.reduce((s, t) => s + t.docs, 0);
     const totalMonth = data.team.reduce((s, t) => s + t.monthTotal, 0);
+    const totalPoints = data.team.reduce((s, t) => s + t.pointsCount, 0);
 
     document.getElementById('summary').innerHTML = [
       ['Торговых', data.team.length],
@@ -298,6 +327,7 @@
       ['Возвраты апрель', fmtMoney(totalReturns)],
       ['Документов реализации', totalDocs],
       ['АКБ месяц', fmtMoney(totalMonth)],
+      ['Точек в реализациях', totalPoints],
     ].map(([l,v]) => `<div class="card"><div class="label">${l}</div><div class="value" style="font-size:26px;">${v}</div></div>`).join('');
 
     document.getElementById('kpi-trades').textContent = data.team.length;
@@ -319,7 +349,7 @@
           <div class="stat-box"><span class="small">Продажи апрель</span><strong>${fmtMoney(t.currSales)}</strong></div>
           <div class="stat-box"><span class="small">Возвраты апрель</span><strong>${fmtMoney(t.currReturns)}</strong></div>
           <div class="stat-box"><span class="small">Реализация</span><strong>${fmtMoney(t.realizationTotal)}</strong></div>
-          <div class="stat-box"><span class="small">Документов</span><strong>${t.docs}</strong></div>
+          <div class="stat-box"><span class="small">Точек</span><strong>${t.pointsCount}</strong></div>
         </div>
       </div>
     `).join('');
@@ -341,6 +371,7 @@
         <td>${t.name}</td>
         <td>${fmtMoney(t.realizationTotal)}</td>
         <td>${t.docs}</td>
+        <td>${t.pointsCount}</td>
       </tr>
     `).join('');
 
@@ -361,6 +392,7 @@
     const highestReturn = [...data.team].sort((a,b) => b.currPct - a.currPct)[0];
     const highestSales = [...data.team].sort((a,b) => b.currSales - a.currSales)[0];
     const highestReal = [...data.team].sort((a,b) => b.realizationTotal - a.realizationTotal)[0];
+    const widestCoverage = [...data.team].sort((a,b) => b.pointsCount - a.pointsCount)[0];
 
     document.getElementById('point-insights').innerHTML = `
       <div class="point-row">
@@ -386,12 +418,37 @@
       </div>
       <div class="point-row">
         <div>
-          <div class="point-name">Что уже реально отображается</div>
-          <div class="muted">АКБ, продажи, возвраты, процент возврата, сумма реализации, число документов и топ-точки.</div>
+          <div class="point-name">Наибольшее покрытие точек в текущем слое</div>
+          <div class="muted">${widestCoverage.name}, ${widestCoverage.pointsCount} точек уже есть в собранном массиве реализаций.</div>
         </div>
-        <div class="point-tags"><span class="badge warn">MVP data</span></div>
+        <div class="point-tags"><span class="badge warn">coverage</span></div>
       </div>
     `;
+
+    document.getElementById('full-points-columns').innerHTML = data.team.map(t => `
+      <div class="full-points-card">
+        <h4>${t.name}</h4>
+        <div class="muted" style="margin-bottom:10px;">${t.zone}, ${t.pointsCount} точек в текущем слое</div>
+        <table class="mini-table">
+          <thead>
+            <tr>
+              <th>Точка</th>
+              <th>Сумма</th>
+              <th>Док.</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${t.allPoints.map(([point, value, docs]) => `
+              <tr>
+                <td>${point}</td>
+                <td>${fmtMoney(value)}</td>
+                <td>${docs}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `).join('');
 
     document.getElementById('fact-vs-realization').innerHTML = data.team.map(t => {
       const diff = t.realizationTotal - t.currSales;
@@ -407,9 +464,9 @@
     }).join('');
 
     document.getElementById('next-priorities').innerHTML = [
-      ['Все точки по каждому торговому', 'Сейчас на сайте только топы и агрегаты. Следующий шаг, вывести полный список точек и вклад каждой точки.'],
       ['Полный товарный слой', 'Нужны таблицы по SKU, чтобы честно показывать плохие и хорошие товары по точкам.'],
-      ['Брак и визиты', 'После привязки справочников отдельно выводим `##`, нормы 1x/2x и пропущенные визиты.']
+      ['Брак и визиты', 'После привязки справочников отдельно выводим `##`, нормы 1x/2x и пропущенные визиты.'],
+      ['Сбор денег', 'Нужно вывести отдельный подтвержденный блок по сбору денег и сверке с реализацией.']
     ].map(([title, text]) => `
       <div class="item">
         <div>
