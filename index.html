@@ -122,6 +122,7 @@
         <a href="#points">Точки</a>
         <a href="#full-points">Все точки</a>
         <a href="#money">Деньги и факт</a>
+        <a href="#cash">Сбор денег</a>
         <a href="#limits">Ограничения</a>
       </div>
     </section>
@@ -201,6 +202,55 @@
       </div>
     </section>
 
+    <section class="cards-2 section" id="cash">
+      <div class="panel">
+        <h3>Сбор денег, что подтверждено сейчас</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Период</th>
+              <th>Сумма</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Март 2026, Покупатели</td>
+              <td>20 752 802 ₽</td>
+              <td><span class="badge good">Подтверждено из CSV</span></td>
+            </tr>
+            <tr>
+              <td>Март 2026, Торговая команда</td>
+              <td>19 962 577 ₽</td>
+              <td><span class="badge good">Подтверждено из CSV</span></td>
+            </tr>
+            <tr>
+              <td>Апрель 2026</td>
+              <td>Пока не выведено</td>
+              <td><span class="badge warn">CSV повреждает числа</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h3>Комментарий по блоку денег</h3>
+        <div class="list">
+          <div class="item">
+            <div>
+              <div class="point-name">Что уже можно показывать честно</div>
+              <div class="muted">Мартовский сбор читается нормально и может быть опорной точкой для раздела по деньгам.</div>
+            </div>
+          </div>
+          <div class="item">
+            <div>
+              <div class="point-name">Что пока нельзя показывать как факт</div>
+              <div class="muted">Апрельский CSV по сбору содержит сломанные числовые значения, поэтому я не подставляю их на сайт как будто они достоверны.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section panel" id="limits">
       <h3>Что ещё не доведено до полной версии</h3>
       <table>
@@ -209,7 +259,7 @@
           <tr><td>Брак `##`</td><td><span class="badge warn">Не выведен отдельно</span></td><td>Нужно точное поле-источник в отчётах.</td></tr>
           <tr><td>Норма визитов 1x/2x</td><td><span class="badge warn">Нет справочника</span></td><td>Без списка точек нельзя честно считать недовизиты.</td></tr>
           <tr><td>Рекомендации по товарам</td><td><span class="badge warn">Частично</span></td><td>Для полной товарной аналитики нужен полный слой по SKU и точкам.</td></tr>
-          <tr><td>Полная аналитика визитов и денег</td><td><span class="badge warn">Не собрана</span></td><td>Следующий честный этап, после точек и товара.</td></tr>
+          <tr><td>Полная аналитика визитов и денег</td><td><span class="badge warn">Частично</span></td><td>Мартовский сбор уже подтверждён, апрельский пока упирается в повреждённый CSV.</td></tr>
         </tbody>
       </table>
       <div class="footer-note">Сейчас сайт уже заметно ближе к реальной аналитической панели. Следом нужно добивать товарный слой, брак, визиты и сбор денег.</div>
